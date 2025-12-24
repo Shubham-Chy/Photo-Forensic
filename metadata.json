@@ -1,0 +1,8 @@
+{
+  "name": "Photo Forensic",
+  "description": "An advanced digital image investigation suite. Extract hidden data, isolate visual artifacts, and leverage Gemini AI for deep semantic analysis and reconstructive generation.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
