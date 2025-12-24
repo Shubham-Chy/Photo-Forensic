@@ -15,9 +15,9 @@
             --accent: rgba(255, 255, 255, 0.05);
         }
         
-        /* Absolute cursor suppression - Ensures only custom cursor exists */
-        html, body, *, a, button, input, textarea { 
-            cursor: show !important; 
+        /* Cursor is handled dynamically by the React component now */
+        .no-system-cursor, .no-system-cursor * { 
+            cursor: none !important; 
         }
         
         body {
