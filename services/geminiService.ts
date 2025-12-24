@@ -1,67 +1,123 @@
-
-import { GoogleGenAI, Type, GenerateContentResponse, Modality } from "@google/genai";
+import {
+  GoogleGenAI,
+  Type,
+  GenerateContentResponse,
+  Modality,
+} from "@google/genai";
 import { AspectRatio, ImageSize } from "../types";
+
+/**
+ * Unified key resolver.
+ * Priority:
+ * 1. Process Environment Variable (Root .env)
+ * 2. Local Forensic Vault (Manual UI Injection)
+ */
+export const resolveApiKey = (): string => {
+  try {
+    // Check for environment variables first (Project Requirement)
+    if (
+      typeof process !== "undefined" &&
+      process.env &&
+      process.env.API_KEY &&
+      process.env.API_KEY !== "undefined" &&
+      process.env.API_KEY !== ""
+    ) {
+      return process.env.API_KEY;
+    }
+
+    // Check for build-time meta env (Vite/Build tool support)
+    // @ts-ignore
+    if (
+      typeof import.meta !== "undefined" &&
+      import.meta.env &&
+      import.meta.env.VITE_API_KEY
+    ) {
+      // @ts-ignore
+      return import.meta.env.VITE_API_KEY;
+    }
+
+    // Fallback: Local Forensic Vault
+    const vaultKey = localStorage.getItem("FORENSIC_PROTOCOL_KEY");
+    if (vaultKey && vaultKey.trim().length > 10) return vaultKey.trim();
+  } catch (e) {
+    console.warn("Credential vault inaccessible.");
+  }
+  return "";
+};
+
+const getAiInstance = () => {
+  const apiKey = resolveApiKey();
+  if (!apiKey) {
+    throw new Error("API_KEY_MISSING");
+  }
+  return new GoogleGenAI({ apiKey });
+};
 
 const handleApiError = (error: any): string => {
   console.error("Forensic API Error:", error);
-  const message = error?.message || "";
-  
+  const message = error?.message || String(error);
+
+  if (message === "API_KEY_MISSING") {
+    return "CREDENTIAL ERROR: NO PROTOCOL KEY DETECTED. PLEASE LINK A KEY IN THE GATEWAY.";
+  }
   if (message.includes("SAFETY")) {
-    return "HEURISTIC BLOCK: THE REQUESTED CONTENT TRIGGERED SAFETY FILTERS AND CANNOT BE PROCESSED.";
+    return "HEURISTIC BLOCK: CONTENT TRIGGERED SYSTEM SAFETY FILTERS.";
   }
   if (message.includes("429") || message.includes("quota")) {
-    return "THROTTLING DETECTED: SYSTEM QUOTA EXHAUSTED. PLEASE TRY AGAIN LATER.";
+    return "THROTTLING: QUOTA EXHAUSTED OR RATE LIMIT REACHED.";
   }
-  if (message.includes("403") || message.includes("API key") || message.includes("not found")) {
-    return "ACCESS DENIED: INVALID OR MISSING CREDENTIALS. RE-LINK PERSONAL API KEY.";
+  if (message.includes("403") || message.includes("not found")) {
+    // Reset local key if it's invalid
+    localStorage.removeItem("FORENSIC_PROTOCOL_KEY");
+    return "ACCESS DENIED: THE PROVIDED KEY IS INVALID. NODE RESET INITIATED.";
   }
-  if (message.includes("Network") || message.includes("fetch")) {
-    return "UPLINK FAILURE: UNABLE TO ESTABLISH CONNECTION WITH THE CLOUD LABS.";
-  }
-  
-  return `SYSTEM ANOMALY: ${message || "UNKNOWN ERROR IN PROCESSING PIPELINE"}`;
+
+  return `SYSTEM ANOMALY: ${message || "UNKNOWN PIPELINE FAILURE"}`;
 };
 
-export const generateImage = async (prompt: string, aspectRatio: AspectRatio, imageSize: ImageSize): Promise<string> => {
+export const generateImage = async (
+  prompt: string,
+  aspectRatio: AspectRatio,
+  imageSize: ImageSize
+): Promise<string> => {
   try {
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const ai = getAiInstance();
     const response = await ai.models.generateContent({
-      model: 'gemini-3-pro-image-preview',
+      model: "gemini-3-pro-image-preview",
       contents: {
-        parts: [{ text: `A stark monochromatic black and white artistic image of: ${prompt}. Minimalist style, high contrast, clean lines.` }],
+        parts: [
+          {
+            text: `A stark monochromatic black and white artistic image of: ${prompt}. Minimalist style, high contrast, clean lines.`,
+          },
+        ],
       },
       config: {
-        imageConfig: {
-          aspectRatio,
-          imageSize
-        }
+        imageConfig: { aspectRatio, imageSize },
       },
     });
 
     for (const part of response.candidates?.[0]?.content?.parts || []) {
-      if (part.inlineData) {
+      if (part.inlineData)
         return `data:image/png;base64,${part.inlineData.data}`;
-      }
     }
-    throw new Error("No image part found in model response.");
+    throw new Error("No image part found.");
   } catch (err) {
     throw new Error(handleApiError(err));
   }
 };
 
-export const editImage = async (base64Image: string, mimeType: string, prompt: string): Promise<string> => {
+export const editImage = async (
+  base64Image: string,
+  mimeType: string,
+  prompt: string
+): Promise<string> => {
   try {
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const ai = getAiInstance();
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash-image',
+      model: "gemini-2.5-flash-image",
       contents: {
         parts: [
-          {
-            inlineData: {
-              data: base64Image.split(',')[1],
-              mimeType,
-            },
-          },
+          { inlineData: { data: base64Image.split(",")[1], mimeType } },
           {
             text: `Modify this image to be strictly monochromatic black and white. Additionally: ${prompt}`,
           },
@@ -70,50 +126,38 @@ export const editImage = async (base64Image: string, mimeType: string, prompt: s
     });
 
     for (const part of response.candidates?.[0]?.content?.parts || []) {
-      if (part.inlineData) {
+      if (part.inlineData)
         return `data:image/png;base64,${part.inlineData.data}`;
-      }
     }
-    throw new Error("Transformation engine failed to return image data.");
+    throw new Error("Transformation failed.");
   } catch (err) {
     throw new Error(handleApiError(err));
   }
 };
 
-export const analyzeImage = async (base64Image: string, mimeType: string): Promise<{text: string, citations: any[]}> => {
+export const analyzeImage = async (
+  base64Image: string,
+  mimeType: string
+): Promise<{ text: string; citations: any[] }> => {
   try {
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const ai = getAiInstance();
     const response = await ai.models.generateContent({
-      model: 'gemini-3-pro-preview',
+      model: "gemini-3-pro-preview",
       contents: {
         parts: [
+          { inlineData: { data: base64Image.split(",")[1], mimeType } },
           {
-            inlineData: {
-              data: base64Image.split(',')[1],
-              mimeType,
-            },
-          },
-          {
-            text: `Perform a deep forensic scan. YOU MUST ORGANIZE YOUR RESPONSE INTO THESE EXACT SECTIONS:
-            
-[SUBJECT_SUMMARY]: Describe the main subject, identity, and visual components.
-[TECHNICAL_VECTORS]: Identify image source (camera, software, vector origin), artifacts, and hardware indicators.
-[GEOGRAPHIC_OVERVIEW]: Location data if visible or inferred.
-[INTELLIGENCE_DATA]: Search findings, historical context, or brand evolution details.
-
-Use bullet points for lists. Be professional, cold, and informative.`,
+            text: `Perform a deep forensic scan. Organize into [SUBJECT_SUMMARY], [TECHNICAL_VECTORS], [GEOGRAPHIC_OVERVIEW], [INTELLIGENCE_DATA].`,
           },
         ],
       },
-      config: {
-        tools: [{ googleSearch: {} }]
-      }
+      config: { tools: [{ googleSearch: {} }] },
     });
 
-    const citations = response.candidates?.[0]?.groundingMetadata?.groundingChunks || [];
     return {
-      text: response.text || "No linguistic analysis generated.",
-      citations
+      text: response.text || "No analysis generated.",
+      citations:
+        response.candidates?.[0]?.groundingMetadata?.groundingChunks || [],
     };
   } catch (err) {
     throw new Error(handleApiError(err));
@@ -122,23 +166,20 @@ Use bullet points for lists. Be professional, cold, and informative.`,
 
 export const generateSpeech = async (text: string): Promise<string> => {
   try {
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const ai = getAiInstance();
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash-preview-tts",
-      contents: [{ parts: [{ text: `Speak this forensic report in a professional, cold tone: ${text}` }] }],
+      contents: [{ parts: [{ text }] }],
       config: {
         responseModalities: [Modality.AUDIO],
         speechConfig: {
-          voiceConfig: {
-            prebuiltVoiceConfig: { voiceName: 'Kore' },
-          },
+          voiceConfig: { prebuiltVoiceConfig: { voiceName: "Kore" } },
         },
       },
     });
-
-    const audioBase64 = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
-    if (!audioBase64) throw new Error("Audio synthesis engine returned empty stream.");
-    return audioBase64;
+    return (
+      response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data || ""
+    );
   } catch (err) {
     throw new Error(handleApiError(err));
   }
