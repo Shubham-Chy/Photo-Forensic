@@ -1,89 +1,112 @@
-# 🔬 PHOTO FORENSIC LABORATORY
+<p align="center">
+  <img src="https://raw.githubusercontent.com/google/material-design-icons/master/png/action/visibility/black/48dp.png" width="80" alt="Logo" style="filter: invert(1);" />
+</p>
 
-![License](https://img.shields.io/badge/License-MIT-black?style=for-the-badge)
-![Engine](https://img.shields.io/badge/Engine-Gemini_2.5_/_3.0-white?style=for-the-badge)
-![Status](https://img.shields.io/badge/Status-Stable-lightgrey?style=for-the-badge)
-![UI](https://img.shields.io/badge/Design-Minimalist_Noir-black?style=for-the-badge)
+<h1 align="center">PHOTO FORENSIC LABORATORY</h1>
 
-**Photo Forensic** is a professional-grade digital image investigation suite. It leverages the Google Gemini API to provide deep semantic analysis, neural reconstruction, and highlight isolation within a high-contrast, monochromatic interface.
+<p align="center">
+  <b>Advanced Digital Investigation & Neural Reconstruction Suite</b>
+</p>
 
----
-
-## 🛠 CORE MODULES
-
-### 1. [INSPECTOR] - Deep Forensic Analysis
-Utilizes `gemini-3-pro-preview` and Google Search Grounding to decode the "why" and "where" of an image.
-- **EXIF Extraction**: Identifies camera hardware, software builds, and timestamps.
-- **Neural Briefing**: Generates a professional linguistic report of subject matter and technical vectors.
-- **Audio Uplink**: Converts forensic reports to cold, professional audio briefings.
-
-### 2. [SYNTHESIZER] - High-Fidelity Generation
-Harnesses `gemini-3-pro-image-preview` for the creation of stark, artistic monochromatic assets.
-- **Geometry Control**: Define aspect ratios (1:1, 16:9, 9:16).
-- **Density Scaling**: Generate 1K, 2K, or 4K high-resolution outputs.
-
-### 3. [MODIFIER] - Semantic Reconstruction
-Powered by `gemini-2.5-flash-image` for natural language image manipulation.
-- **Reconstruction**: Add, remove, or transform elements using text prompts.
-- **Diff Slider**: Compare original vs. reconstructed artifacts in real-time.
+<p align="center">
+  <img src="https://img.shields.io/badge/License-MIT-black?style=for-the-badge" alt="MIT License" />
+  <img src="https://img.shields.io/badge/Engine-Gemini_3.0_Pro-white?style=for-the-badge" alt="Gemini Engine" />
+  <img src="https://img.shields.io/badge/UI-Minimalist_Noir-black?style=for-the-badge" alt="UI Theme" />
+  <img src="https://img.shields.io/badge/Status-Stable-lightgrey?style=for-the-badge" alt="Status" />
+</p>
 
 ---
 
-## 📸 GENERATION PREVIEW
-The laboratory specializes in the **Nano Banana** (Gemini 2.5/3.0) series for image synthesis. 
+## 🔬 OVERVIEW
 
-> **PROMPT**: *"A stark minimalist monolith standing in a dark desert, high contrast, film grain, noir style."*
+**Photo Forensic** is a high-fidelity digital asset investigation tool. Designed with a strict monochromatic aesthetic, it merges deep technical EXIF analysis with cutting-edge neural protocols to reconstruct, analyze, and synthesize visual data.
 
-| Stage | Process | Output Type |
-| :--- | :--- | :--- |
-| **Input** | Latent Space Calibration | Noise Matrix |
-| **Neural** | Denoising Sequence | High Contrast Grayscale |
-| **Export** | Artifact Finalization | **[VIEW_RESULT]** |
+### 🔳 SYSTEM MODULES
+
+| Module | Identifier | Neural Logic | Primary Function |
+| :--- | :--- | :--- | :--- |
+| **Inspector** | `MOD_ANALYZE` | Gemini 3 Pro | Forensic reporting & source grounding. |
+| **Synthesizer** | `MOD_GENERATE` | Nano Banana | High-resolution monochromatic creation. |
+| **Modifier** | `MOD_EDIT` | Gemini 2.5 Flash | Semantic image reconstruction. |
+| **Uplink** | `MOD_VOICE` | Live Native Audio | Real-time vocal forensic assistance. |
 
 ---
 
-## 🚀 INSTALLATION PROCESS
+## 🖼️ VISUAL PREVIEW
 
-### 1. Prerequisites
-- Node.js (Latest LTS recommended)
-- A valid Google Gemini API Key (obtain from [Google AI Studio](https://aistudio.google.com/))
+<p align="center">
+  <i>[ INTERFACE_SCAN_01: MAIN LABORATORY ]</i><br/>
+  <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/monitor.svg" width="400" alt="UI Screenshot Placeholder" style="filter: invert(1); border: 1px solid #333; padding: 20px;" /><br/>
+  <b>STARK MINIMALISM • NOIR CONTRAST • HUD OVERLAY</b>
+</p>
 
-### 2. Clone the Repository
+### Nano Banana Generation Preview
+The Synthesizer creates high-contrast, grain-rich monochromatic structures:
+
+> **Input Command:** `A monolith in a void, sharp edges, cinematic grain, noir.`
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/image.svg" width="200" alt="Gen Preview" style="filter: invert(1); border: 1px solid #222;" />
+</p>
+
+---
+
+## 🚀 INSTALLATION PROTOCOL
+
+Follow these steps to establish a local node:
+
+### 1. Requirements Check
+- **Node.js**: Version 18.0 or higher.
+- **API Key**: A valid Google Gemini API Key from [AI Studio](https://aistudio.google.com/).
+
+### 2. Deployment
 ```bash
+# Clone the encrypted repository
 git clone https://github.com/your-repo/photo-forensic.git
+
+# Enter the laboratory directory
 cd photo-forensic
-```
 
-### 3. Environment Configuration
-Copy the example environment file and populate it with your credentials.
-```bash
-cp .env_example .env
-```
-*Note: For the **Neural Uplink** and **Synthesizer** modules, ensure your API Key is linked to a project with billing enabled.*
-
-### 4. Dependency Deployment
-```bash
+# Install neural dependencies
 npm install
 ```
 
-### 5. Launch Protocol
+### 3. Environment Linkage
+1. Locate `.env_example` in the root directory.
+2. Duplicate and rename it to `.env`.
+3. Open `.env` and insert your `API_KEY`.
+
+```env
+API_KEY=AIzaSy...your_key_here
+```
+
+### 4. System Launch
 ```bash
+# Initiate development uplink
 npm run dev
 ```
 
 ---
 
-## ⌨️ TERMINAL COMMANDS
-The built-in system terminal allows for rapid navigation:
-- `help`: Lists all available system protocols.
-- `goto [view]`: Navigate to `analyze`, `generate`, `edit`, or `convert`.
-- `status`: Check local uplink and encryption health.
-- `whoami`: Verify current clearance level.
+## ⌨️ COMMAND GUIDE
+
+The built-in **System Terminal** (accessible via the footer) allows for rapid navigation and diagnostic checks.
+
+- `goto analyze`: Fast-travel to the Inspector module.
+- `status`: Returns the health of the neural uplink and local latency.
+- `clear`: Purges the terminal history bitstream.
+- `help`: Displays the full manual of available protocols.
 
 ---
 
-## 📜 LICENSE
-MIT. For institutional and educational forensic research.
+## 📜 CORE PROTOCOLS
+
+1. **Security**: Right-click and text selection are disabled to simulate a secure software environment.
+2. **Persistence**: Sessions are cached locally to prevent data loss during uplink fluctuations.
+3. **Forensics**: Guest users receive watermarked exports to preserve institutional integrity.
 
 ---
-**SYSTEM_LOG**: *Uplink Stable. Forensic Node 0.0.1 Ready.*
+
+<p align="center">
+  <font size="1">© 2025 PHOTO FORENSIC LABS • END OF TRANSMISSION • SECURE_NODE_001</font>
+</p>
