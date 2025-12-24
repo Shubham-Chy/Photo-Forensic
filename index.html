@@ -12,7 +12,7 @@
         :root {
             --bg: #000;
             --fg: #fff;
-            --accent: rgba(255, 255, 255, 0.1);
+            --accent: rgba(255, 255, 255, 0.05);
         }
         * { cursor: crosshair !important; }
         body {
@@ -30,10 +30,8 @@
             inset: 0;
             background-image: linear-gradient(var(--accent) 1px, transparent 1px), 
                               linear-gradient(90deg, var(--accent) 1px, transparent 1px);
-            background-size: 50px 50px;
-            perspective: 1000px;
-            transform: rotateX(60deg) translateY(-50%) scale(2);
-            opacity: 0.1;
+            background-size: 80px 80px;
+            opacity: 0.2;
             z-index: -1;
             pointer-events: none;
         }
@@ -42,27 +40,24 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: 2px;
-            background: rgba(255, 255, 255, 0.05);
-            animation: scan 10s linear infinite;
+            height: 100vh;
+            background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.02) 50%, transparent);
+            animation: scan 8s linear infinite;
             z-index: 100;
             pointer-events: none;
         }
         @keyframes scan {
-            from { transform: translateY(-100vh); }
-            to { transform: translateY(100vh); }
+            from { transform: translateY(-100%); }
+            to { transform: translateY(100%); }
         }
-        .glitch-text {
-            text-shadow: 2px 0 #fff, -2px 0 #000;
-            animation: glitch 3s infinite alternate;
-        }
-        @keyframes glitch {
-            0% { text-shadow: 1px 0 #fff; }
-            50% { text-shadow: -1px 0 #fff; }
-            100% { text-shadow: 2px 0 #fff; }
-        }
+        .tracking-ultra { tracking: 1.2em; }
         #root:not(:empty) + #no-js-fallback {
             display: none !important;
+        }
+        .fade-in { animation: fadeIn 1.5s ease-out forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
     <script type="importmap">
@@ -79,94 +74,64 @@
 <body>
     <div id="root"></div>
     
-    <!-- HIGH-AESTHETIC FALLBACK / HUB -->
-    <div id="no-js-fallback" class="relative z-10 flex flex-col items-center justify-center min-h-screen px-6 py-20">
+    <div id="no-js-fallback" class="relative z-10 flex flex-col items-center justify-center min-h-screen px-6">
         <div class="grid-bg"></div>
         <div class="scanline"></div>
 
-        <div class="max-w-4xl w-full space-y-24 text-center">
-            {/* Header Branding */}
-            <header class="space-y-8 animate-in fade-in zoom-in-95 duration-1000">
-                <div class="w-16 h-16 border border-white mx-auto flex items-center justify-center group hover:scale-110 transition-transform">
-                    <div class="w-2 h-2 bg-white animate-pulse"></div>
+        <div class="max-w-5xl w-full flex flex-col items-center text-center space-y-24 fade-in">
+            <header class="space-y-6">
+                <div class="w-12 h-12 border border-white mx-auto flex items-center justify-center relative">
+                    <div class="w-1 h-1 bg-white animate-ping"></div>
                 </div>
                 <div class="space-y-2">
-                    <h1 class="text-4xl md:text-7xl font-bold tracking-[0.6em] uppercase glitch-text">Photo Forensic</h1>
-                    <p class="text-[10px] tracking-[0.4em] opacity-30 uppercase italic">Analytical Node Initialization Hub</p>
+                    <h1 class="text-5xl md:text-8xl font-bold tracking-[0.5em] uppercase leading-none">Photo<br>Forensic</h1>
+                    <p class="text-[9px] tracking-[0.6em] opacity-30 uppercase italic mt-4">Analytical Node Initialization Hub</p>
                 </div>
             </header>
 
-            {/* Main Action Hub */}
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 text-left">
-                {/* PREVIEW TRACK */}
-                <div class="border border-white/10 bg-white/[0.02] p-10 space-y-8 hover:border-white/40 transition-all group">
-                    <div class="space-y-4">
-                        <div class="flex justify-between items-center">
-                            <span class="text-[8px] opacity-20 tracking-widest uppercase">Protocol_01</span>
-                            <div class="w-2 h-[1px] bg-white/20"></div>
-                        </div>
-                        <h2 class="text-lg tracking-[0.2em] uppercase">Visual Showcase</h2>
-                        <p class="text-[9px] opacity-40 uppercase tracking-widest leading-loose">
-                            Explore the lab's capabilities through a browser-optimized interactive preview. No installation required.
-                        </p>
-                    </div>
-                    <a href="preview.html" class="block w-full py-4 text-center border border-white font-bold text-[10px] tracking-[0.5em] uppercase hover:bg-white hover:text-black transition-all">
-                        Launch Preview
-                    </a>
-                </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-px bg-white/10 border border-white/10 w-full max-w-3xl">
+                <a href="preview.html" class="bg-black p-12 space-y-6 hover:bg-white hover:text-black transition-all duration-500 group text-left">
+                    <span class="text-[8px] opacity-40 group-hover:opacity-100 uppercase tracking-widest">[01] Browser Preview</span>
+                    <h2 class="text-xl tracking-[0.2em] uppercase font-bold">Showcase</h2>
+                    <p class="text-[9px] opacity-40 group-hover:opacity-80 leading-relaxed uppercase tracking-widest">
+                        Explore core capabilities and feature architecture. High-fidelity visual manifesto.
+                    </p>
+                </a>
 
-                {/* SYSTEM TRACK */}
-                <div class="border border-white/10 bg-white/[0.02] p-10 space-y-8 hover:border-white/40 transition-all group">
-                    <div class="space-y-4">
-                        <div class="flex justify-between items-center">
-                            <span class="text-[8px] opacity-20 tracking-widest uppercase">Protocol_02</span>
-                            <div class="w-2 h-[1px] bg-white/20"></div>
-                        </div>
-                        <h2 class="text-lg tracking-[0.2em] uppercase">Full System Setup</h2>
-                        <p class="text-[9px] opacity-40 uppercase tracking-widest leading-loose">
-                            Execute the high-compute forensic suite on your local machine with full API uplink capabilities.
-                        </p>
-                    </div>
-                    <a href="#install" class="block w-full py-4 text-center border border-white/10 font-bold text-[10px] tracking-[0.5em] uppercase hover:border-white transition-all">
-                        Setup Guide
-                    </a>
-                </div>
+                <a href="#install" class="bg-black p-12 space-y-6 hover:bg-white hover:text-black transition-all duration-500 group text-left">
+                    <span class="text-[8px] opacity-40 group-hover:opacity-100 uppercase tracking-widest">[02] Local Uplink</span>
+                    <h2 class="text-xl tracking-[0.2em] uppercase font-bold">Node Setup</h2>
+                    <p class="text-[9px] opacity-40 group-hover:opacity-80 leading-relaxed uppercase tracking-widest">
+                        Establish local compute environment. Full neural processing & API integration.
+                    </p>
+                </a>
             </div>
 
-            {/* Embedded Installation Guide */}
-            <section id="install" class="text-left space-y-12 border-t border-white/5 pt-24 scroll-mt-24">
-                <div class="text-center">
-                    <h3 class="text-[12px] tracking-[1em] opacity-40 uppercase">Node Deployment Manual</h3>
-                </div>
-
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
-                    <div class="space-y-6">
-                        <h4 class="text-[10px] tracking-widest uppercase opacity-60">1. Core Replication</h4>
-                        <div class="bg-white/[0.03] p-6 text-[11px] leading-relaxed opacity-60 border border-white/5 font-mono">
-                            <p>$ git clone https://github.com/shubham-chy/Photo-Forensic.git</p>
-                            <p>$ cd Photo-Forensic</p>
-                            <p>$ npm install</p>
+            <section id="install" class="w-full max-w-3xl text-left border-t border-white/10 pt-20">
+                <h3 class="text-[10px] tracking-[0.8em] opacity-40 uppercase text-center mb-16 italic">Deployment Protocol</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                    <div class="space-y-4">
+                        <span class="text-[8px] opacity-20 uppercase tracking-widest">Binary Replication</span>
+                        <div class="bg-white/[0.03] p-6 text-[10px] border border-white/5 font-mono text-white/60">
+                            $ git clone [repository]<br>
+                            $ cd photo-forensic<br>
+                            $ npm install
                         </div>
                     </div>
-                    <div class="space-y-6">
-                        <h4 class="text-[10px] tracking-widest uppercase opacity-60">2. Credential Linkage</h4>
-                        <div class="bg-white/[0.03] p-6 text-[11px] leading-relaxed opacity-60 border border-white/5 font-mono italic">
-                            <p># Create a .env file in the root directory</p>
-                            <p>API_KEY=your_gemini_key_here</p>
-                            <p class="mt-4 text-[9px] not-italic underline"><a href="https://aistudio.google.com/">Obtain credentials from AI Studio</a></p>
+                    <div class="space-y-4">
+                        <span class="text-[8px] opacity-20 uppercase tracking-widest">Credential Linkage</span>
+                        <div class="bg-white/[0.03] p-6 text-[10px] border border-white/5 font-mono text-white/40 italic">
+                            # Set API_KEY in .env<br>
+                            # AIzaSy...[UPLINK_SECURE]
                         </div>
                     </div>
-                </div>
-
-                <div class="flex flex-col items-center space-y-6">
-                     <div class="h-[1px] w-24 bg-white/10"></div>
-                     <p class="text-[8px] opacity-20 uppercase tracking-[0.4em]">Launch with <span class="text-white">npm run dev</span> and open localhost:5173</p>
                 </div>
             </section>
         </div>
 
-        <footer class="mt-40 text-[7px] tracking-[0.8em] opacity-20 uppercase">
-            &copy; 2025 PHOTO FORENSIC LABS // END OF TRANSMISSION
+        <footer class="mt-32 text-[7px] tracking-[1em] opacity-20 uppercase">
+            PHOTO FORENSIC // SECURE NODE
         </footer>
     </div>
 

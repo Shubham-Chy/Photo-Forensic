@@ -3,239 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PREVIEW | Photo Forensic Lab</title>
+    <title>Manifesto | Photo Forensic Lab</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
         body {
             background-color: #000;
             color: #fff;
-            font-family: 'Inter', sans-serif;
+            font-family: 'JetBrains Mono', monospace;
             scroll-behavior: smooth;
         }
-        .font-mono { font-family: 'JetBrains Mono', monospace; }
-        .noir-card {
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            background: rgba(255, 255, 255, 0.01);
+        .feature-item {
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding: 4rem 0;
             transition: all 0.5s ease;
         }
-        .noir-card:hover {
-            border-color: rgba(255, 255, 255, 0.2);
-            background: rgba(255, 255, 255, 0.02);
+        .feature-item:hover {
+            border-color: rgba(255,255,255,0.3);
         }
-        @keyframes scanline {
-            0% { transform: translateY(-100%); }
-            100% { transform: translateY(100%); }
-        }
-        .scanline {
-            width: 100%;
-            height: 2px;
-            background: rgba(255, 255, 255, 0.02);
-            position: fixed;
-            animation: scanline 8s linear infinite;
-            z-index: 50;
-            pointer-events: none;
-        }
-        .code-block {
-            background: #050505;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 1.5rem;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.75rem;
-            line-height: 1.8;
-            color: rgba(255, 255, 255, 0.6);
-        }
-        .code-block span { color: #fff; }
+        .tracking-mega { tracking: 1.5em; }
     </style>
 </head>
 <body class="selection:bg-white selection:text-black">
-    <div class="scanline"></div>
-
-    <!-- Navigation -->
-    <nav class="fixed top-0 left-0 w-full z-[60] p-8 flex justify-between items-center border-b border-white/5 bg-black/80 backdrop-blur-md">
+    <nav class="fixed top-0 left-0 w-full z-[60] p-10 flex justify-between items-center bg-black/50 backdrop-blur-md border-b border-white/5">
         <div class="flex items-center gap-4">
-            <div class="w-2 h-2 bg-white animate-pulse"></div>
-            <div class="font-mono text-[10px] tracking-[0.5em] uppercase font-bold">Forensic Labs <span class="opacity-20">Preview</span></div>
+            <div class="w-2 h-2 bg-white"></div>
+            <div class="text-[10px] tracking-[0.5em] uppercase font-bold">Forensic Manifesto</div>
         </div>
-        <div class="flex gap-8 font-mono text-[9px] uppercase tracking-widest">
-            <a href="#showcase" class="opacity-40 hover:opacity-100 transition-opacity">Showcase</a>
-            <a href="#setup" class="opacity-40 hover:opacity-100 transition-opacity">Establish Node</a>
-        </div>
+        <a href="index.html" class="text-[9px] uppercase tracking-widest opacity-40 hover:opacity-100 transition-opacity">Back to Terminal</a>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="min-h-screen flex flex-col items-center justify-center text-center px-6 pt-24">
-        <div class="space-y-12 max-w-4xl">
-            <div class="relative inline-block group">
-                <h1 class="font-mono text-6xl md:text-9xl font-bold tracking-[0.4em] uppercase text-white transition-all group-hover:tracking-[0.45em] duration-1000">
-                    PHOTO<br>FORENSIC
-                </h1>
-                <div class="absolute -inset-8 border border-white/5 -z-10"></div>
-            </div>
-            
-            <p class="font-mono text-[10px] md:text-[12px] tracking-[0.4em] opacity-30 leading-relaxed uppercase max-w-xl mx-auto italic">
-                A professional-grade investigation suite. 
-                Designed for local neural reconstruction and technical EXIF isolation.
+    <main class="max-w-5xl mx-auto px-6 pt-64 pb-32">
+        <header class="mb-32 space-y-12">
+            <h1 class="text-7xl md:text-9xl font-bold tracking-tighter uppercase leading-none italic">Feature<br>Capabilities</h1>
+            <p class="text-xs tracking-[0.5em] opacity-30 uppercase max-w-lg leading-relaxed">
+                A technical breakdown of the Photo Forensic analytical engine and its neural sub-systems.
             </p>
+        </header>
 
-            <div class="pt-8 flex flex-col md:flex-row items-center justify-center gap-6">
-                <a href="#setup" class="px-12 py-5 bg-white text-black font-mono text-[10px] tracking-[0.5em] uppercase hover:bg-black hover:text-white border border-white transition-all duration-500">
-                    Get Started
-                </a>
-                <a href="https://github.com/shubham-chy/Photo-Forensic" target="_blank" class="px-12 py-5 border border-white/10 font-mono text-[10px] tracking-[0.5em] uppercase hover:border-white transition-all duration-500">
-                    View Source
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <!-- Showcase Section -->
-    <section id="showcase" class="py-32 px-6 md:px-24 border-t border-white/5">
-        <div class="max-w-7xl mx-auto">
-            <div class="mb-24 text-center space-y-4">
-                <h2 class="font-mono text-[10px] tracking-[1.5em] opacity-20 uppercase">System Showcase</h2>
-                <p class="font-mono text-[8px] tracking-widest opacity-10 uppercase italic">Interactive Modules Overview</p>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
-                <!-- Module 1 -->
-                <div class="noir-card p-10 space-y-8 flex flex-col justify-between">
-                    <div class="space-y-4">
-                        <div class="w-8 h-8 border border-white/20 flex items-center justify-center">
-                            <span class="font-mono text-[10px] opacity-40">01</span>
-                        </div>
-                        <h3 class="font-mono text-lg tracking-widest uppercase">The Inspector</h3>
-                        <p class="font-mono text-[10px] opacity-40 leading-loose uppercase tracking-widest">
-                            Deep-scan images for neural artifacts, hidden metadata, and semantic visual grounding using the Gemini 3 Pro engine.
-                        </p>
-                    </div>
-                    <div class="aspect-video bg-black border border-white/5 flex items-center justify-center relative overflow-hidden group">
-                        <div class="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                        <span class="font-mono text-[8px] opacity-20 uppercase tracking-[0.4em]">Preview_Simulation</span>
-                        <!-- Mockup Lines -->
-                        <div class="absolute top-0 left-0 w-full h-[1px] bg-white/10 translate-y-8"></div>
-                        <div class="absolute bottom-0 left-0 w-full h-[1px] bg-white/10 -translate-y-8"></div>
-                    </div>
-                </div>
-
-                <!-- Module 2 -->
-                <div class="noir-card p-10 space-y-8 flex flex-col justify-between">
-                    <div class="space-y-4">
-                        <div class="w-8 h-8 border border-white/20 flex items-center justify-center">
-                            <span class="font-mono text-[10px] opacity-40">02</span>
-                        </div>
-                        <h3 class="font-mono text-lg tracking-widest uppercase">The Synthesizer</h3>
-                        <p class="font-mono text-[10px] opacity-40 leading-loose uppercase tracking-widest">
-                            Construct high-fidelity monochromatic visual structures from natural language parameters.
-                        </p>
-                    </div>
-                    <div class="aspect-video bg-black border border-white/5 flex items-center justify-center relative overflow-hidden group">
-                        <div class="w-16 h-16 border border-white/20 rotate-45 group-hover:rotate-90 transition-transform duration-1000"></div>
-                        <span class="absolute bottom-4 font-mono text-[8px] opacity-10 uppercase tracking-[0.4em]">Asset_Generation</span>
-                    </div>
-                </div>
-
-                <!-- Module 3 -->
-                <div class="noir-card p-10 space-y-8 flex flex-col justify-between">
-                    <div class="space-y-4">
-                        <div class="w-8 h-8 border border-white/20 flex items-center justify-center">
-                            <span class="font-mono text-[10px] opacity-40">03</span>
-                        </div>
-                        <h3 class="font-mono text-lg tracking-widest uppercase">The Uplink</h3>
-                        <p class="font-mono text-[10px] opacity-40 leading-loose uppercase tracking-widest">
-                            Real-time voice-assisted forensic investigation via Gemini Live Native Audio protocol.
-                        </p>
-                    </div>
-                    <div class="aspect-video bg-black border border-white/5 flex items-center justify-center relative overflow-hidden">
-                        <div class="flex items-end gap-1 h-8">
-                            <div class="w-1 h-4 bg-white/40 animate-pulse"></div>
-                            <div class="w-1 h-6 bg-white/40 animate-pulse delay-75"></div>
-                            <div class="w-1 h-3 bg-white/40 animate-pulse delay-150"></div>
-                            <div class="w-1 h-8 bg-white/40 animate-pulse delay-100"></div>
-                        </div>
-                        <span class="absolute bottom-4 font-mono text-[8px] opacity-10 uppercase tracking-[0.4em]">Voice_Sync_Active</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Setup Section -->
-    <section id="setup" class="py-32 px-6 md:px-24 bg-white/[0.01] border-t border-white/5">
-        <div class="max-w-4xl mx-auto space-y-16">
-            <div class="text-center space-y-4">
-                <h2 class="font-mono text-3xl md:text-5xl uppercase tracking-tighter">Establish Node</h2>
-                <p class="font-mono text-[9px] tracking-[0.5em] opacity-30 uppercase italic">Local Deployment Protocol v2.5</p>
-            </div>
-
-            <div class="space-y-12">
-                <!-- Step 1 -->
-                <div class="space-y-6">
-                    <div class="flex items-center gap-4">
-                        <span class="font-mono text-[10px] border border-white/20 px-3 py-1">STEP_01</span>
-                        <h4 class="font-mono text-sm tracking-widest uppercase">Clone Bitstream</h4>
-                    </div>
-                    <div class="code-block">
-                        <p><span>git clone</span> https://github.com/shubham-chy/Photo-Forensic.git</p>
-                        <p><span>cd</span> Photo-Forensic</p>
-                    </div>
-                </div>
-
-                <!-- Step 2 -->
-                <div class="space-y-6">
-                    <div class="flex items-center gap-4">
-                        <span class="font-mono text-[10px] border border-white/20 px-3 py-1">STEP_02</span>
-                        <h4 class="font-mono text-sm tracking-widest uppercase">Initialize Cores</h4>
-                    </div>
-                    <div class="code-block">
-                        <p><span>npm</span> install</p>
-                    </div>
-                </div>
-
-                <!-- Step 3 -->
-                <div class="space-y-6">
-                    <div class="flex items-center gap-4">
-                        <span class="font-mono text-[10px] border border-white/20 px-3 py-1">STEP_03</span>
-                        <h4 class="font-mono text-sm tracking-widest uppercase">Link API Credentials</h4>
-                    </div>
-                    <div class="code-block italic">
-                        <p># Create a new .env file in the root directory</p>
-                        <p># Paste your Gemini API Key as follows:</p>
-                        <p><span>API_KEY</span>=AIzaSy...your_actual_key_here</p>
-                    </div>
-                    <p class="font-mono text-[8px] opacity-20 uppercase tracking-[0.2em]">Obtain your key at <a href="https://aistudio.google.com/" target="_blank" class="underline hover:opacity-100 transition-opacity">AI Studio</a></p>
-                </div>
-
-                <!-- Step 4 -->
-                <div class="space-y-6">
-                    <div class="flex items-center gap-4">
-                        <span class="font-mono text-[10px] border border-white/20 px-3 py-1">STEP_04</span>
-                        <h4 class="font-mono text-sm tracking-widest uppercase">Execute Launch</h4>
-                    </div>
-                    <div class="code-block">
-                        <p><span>npm</span> run dev</p>
-                    </div>
+        <section class="space-y-0">
+            <div class="feature-item flex flex-col md:flex-row gap-12 group">
+                <div class="w-24 text-[10px] opacity-20 group-hover:opacity-100 transition-opacity">[01]</div>
+                <div class="flex-grow space-y-6">
+                    <h2 class="text-4xl md:text-6xl uppercase tracking-tight italic font-bold">Neural Inspector</h2>
+                    <p class="text-sm opacity-40 max-w-2xl leading-relaxed uppercase tracking-widest">
+                        Deep-scan digital assets for structural artifacts, hidden metadata, and ELA (Error Level Analysis) inconsistencies. Leveraging the Gemini 3 Pro reasoning engine for contextual grounding.
+                    </p>
                 </div>
             </div>
 
-            <div class="p-12 border border-white/5 bg-black text-center space-y-4">
-                <p class="font-mono text-[10px] opacity-40 uppercase tracking-[0.4em] leading-loose">
-                    The lab is now operational at <span class="text-white">localhost:5173</span>.<br>
-                    Welcome to the investigation.
-                </p>
+            <div class="feature-item flex flex-col md:flex-row gap-12 group">
+                <div class="w-24 text-[10px] opacity-20 group-hover:opacity-100 transition-opacity">[02]</div>
+                <div class="flex-grow space-y-6">
+                    <h2 class="text-4xl md:text-6xl uppercase tracking-tight italic font-bold">Binary Extractor</h2>
+                    <p class="text-sm opacity-40 max-w-2xl leading-relaxed uppercase tracking-widest">
+                        Isolation of visual highlights and high-contrast normalization. Strip background matrices and isolate pure vector-equivalent structures for iconographic recovery.
+                    </p>
+                </div>
             </div>
-        </div>
-    </section>
 
-    <!-- Footer -->
-    <footer class="p-24 border-t border-white/5 flex flex-col items-center gap-12 text-center">
-        <div class="w-12 h-12 border border-white/10 flex items-center justify-center opacity-20">
-            <div class="w-1 h-1 bg-white"></div>
-        </div>
-        <div class="space-y-2">
-            <p class="font-mono text-[10px] tracking-[0.5em] uppercase opacity-20">&copy; 2025 Photo Forensic Labs</p>
-            <p class="font-mono text-[7px] tracking-widest opacity-10 uppercase">Secure Node Encryption: AES-256 Enabled</p>
-        </div>
-    </footer>
+            <div class="feature-item flex flex-col md:flex-row gap-12 group">
+                <div class="w-24 text-[10px] opacity-20 group-hover:opacity-100 transition-opacity">[03]</div>
+                <div class="flex-grow space-y-6">
+                    <h2 class="text-4xl md:text-6xl uppercase tracking-tight italic font-bold">Synthesizer Core</h2>
+                    <p class="text-sm opacity-40 max-w-2xl leading-relaxed uppercase tracking-widest">
+                        High-compute image generation optimized for monochromatic artistic output. Control aspect geometry and visual density up to 4K resolution.
+                    </p>
+                </div>
+            </div>
+
+            <div class="feature-item flex flex-col md:flex-row gap-12 group">
+                <div class="w-24 text-[10px] opacity-20 group-hover:opacity-100 transition-opacity">[04]</div>
+                <div class="flex-grow space-y-6">
+                    <h2 class="text-4xl md:text-6xl uppercase tracking-tight italic font-bold">Vocal Uplink</h2>
+                    <p class="text-sm opacity-40 max-w-2xl leading-relaxed uppercase tracking-widest">
+                        Real-time forensic assistance via Native Audio protocols. Low-latency bidirectional voice communication for hands-free analytical briefing.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <footer class="mt-64 flex flex-col items-center space-y-12">
+            <div class="w-px h-32 bg-gradient-to-b from-white to-transparent"></div>
+            <p class="text-[8px] tracking-[1em] opacity-20 uppercase">END OF MANIFESTO</p>
+        </footer>
+    </main>
 </body>
 </html>
