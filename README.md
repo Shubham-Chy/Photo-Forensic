@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="logo.png" width="120" alt="Logo" style="filter: invert(1); scale: 1.5;" />
+</p>
+
 <h1 align="center">PHOTO FORENSIC LABS</h1>
 
 <p align="center">
