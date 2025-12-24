@@ -14,7 +14,12 @@
             --fg: #fff;
             --accent: rgba(255, 255, 255, 0.05);
         }
-        * { cursor: crosshair !important; }
+        
+        /* Absolute cursor suppression - Ensures only custom cursor exists */
+        html, body, *, a, button, input, textarea { 
+            cursor: none !important; 
+        }
+        
         body {
             background-color: var(--bg);
             color: var(--fg);
@@ -25,6 +30,7 @@
             flex-direction: column;
             min-height: 100vh;
         }
+
         .grid-bg {
             position: fixed;
             inset: 0;
@@ -35,6 +41,7 @@
             z-index: -1;
             pointer-events: none;
         }
+
         .scanline {
             position: fixed;
             top: 0;
@@ -46,18 +53,52 @@
             z-index: 100;
             pointer-events: none;
         }
+
         @keyframes scan {
             from { transform: translateY(-100%); }
             to { transform: translateY(100%); }
         }
-        .tracking-ultra { tracking: 1.2em; }
+
         #root:not(:empty) + #no-js-fallback {
             display: none !important;
         }
+
         .fade-in { animation: fadeIn 1.5s ease-out forwards; }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* PREMIUM TECH HOVER EFFECT */
+        .tech-hover {
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            overflow: hidden;
+        }
+        
+        .tech-hover:hover {
+            letter-spacing: 0.6em;
+            background: #fff !important;
+            color: #000 !important;
+        }
+
+        /* Diagnostic corner brackets that appear on hover */
+        .tech-hover::before, .tech-hover::after {
+            content: '';
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        .tech-hover::before { top: 0; left: 0; border-top: 1px solid #fff; border-left: 1px solid #fff; }
+        .tech-hover::after { bottom: 0; right: 0; border-bottom: 1px solid #fff; border-right: 1px solid #fff; }
+        
+        .tech-hover:hover::before, .tech-hover:hover::after {
+            opacity: 1;
+            width: 12px;
+            height: 12px;
+            border-color: #000;
         }
     </style>
     <script type="importmap">

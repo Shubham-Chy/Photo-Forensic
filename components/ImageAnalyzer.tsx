@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { analyzeImage, generateSpeech } from '../services/geminiService';
 import { saveResult } from '../services/storageService';
@@ -19,6 +18,8 @@ interface ReportSection {
   title: string;
   content: string[];
 }
+
+type SessionStatus = 'IDLE' | 'SAVING' | 'SAVED' | 'ERROR' | 'RESTORING';
 
 // Internal audio decoding utilities as per @google/genai guidelines
 function decodeBase64(base64: string) {
@@ -59,28 +60,25 @@ const ImageAnalyzer: React.FC = () => {
   const [exif, setExif] = useState<ExifData | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [sessionStatus, setSessionStatus] = useState<SessionStatus>('IDLE');
   const [error, setError] = useState<string | null>(null);
-  const [isSessionLoaded, setIsSessionLoaded] = useState(false);
+  const [hasStoredSession, setHasStoredSession] = useState(false);
+  const [showOverwriteConfirm, setShowOverwriteConfirm] = useState(false);
   
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const currentSourceRef = useRef<AudioBufferSourceNode | null>(null);
 
-  // Load session on mount
+  // Check for stored session on mount
   useEffect(() => {
     const savedSession = localStorage.getItem(SESSION_STORAGE_KEY);
     if (savedSession) {
+      setHasStoredSession(true);
       try {
         const data = JSON.parse(savedSession);
-        setImage(data.image);
-        setMimeType(data.mimeType);
-        setAnalysis(data.analysis);
-        setCitations(data.citations || []);
-        setMetadata(data.metadata);
-        setExif(data.exif);
-        setIsSessionLoaded(true);
+        applySessionData(data);
       } catch (e) {
-        console.error("Failed to restore session bitstream", e);
+        console.error("Session integrity check failed", e);
       }
     }
     return () => {
@@ -88,25 +86,63 @@ const ImageAnalyzer: React.FC = () => {
     };
   }, []);
 
-  // Auto-persist session changes
-  useEffect(() => {
-    if (image || analysis) {
-      const sessionData = {
-        image,
-        mimeType,
-        analysis,
-        citations,
-        metadata,
-        exif,
-        timestamp: Date.now()
-      };
+  const applySessionData = (data: any) => {
+    setImage(data.image);
+    setMimeType(data.mimeType);
+    setAnalysis(data.analysis);
+    setCitations(data.citations || []);
+    setMetadata(data.metadata);
+    setExif(data.exif);
+  };
+
+  const handleRestoreSession = () => {
+    setSessionStatus('RESTORING');
+    const savedSession = localStorage.getItem(SESSION_STORAGE_KEY);
+    if (savedSession) {
       try {
-        localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(sessionData));
+        const data = JSON.parse(savedSession);
+        applySessionData(data);
+        setTimeout(() => setSessionStatus('IDLE'), 800);
       } catch (e) {
-        console.warn("Session exceeds local storage quota. Persistence may be partial.");
+        setError("VAULT CORRUPTION: DATA RECOVERY FAILED.");
+        setSessionStatus('ERROR');
       }
     }
-  }, [image, analysis, citations, metadata, exif]);
+  };
+
+  const commitSave = () => {
+    setSessionStatus('SAVING');
+    setShowOverwriteConfirm(false);
+    
+    const sessionData = {
+      image,
+      mimeType,
+      analysis,
+      citations,
+      metadata,
+      exif,
+      timestamp: Date.now()
+    };
+    
+    try {
+      localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(sessionData));
+      setHasStoredSession(true);
+      setSessionStatus('SAVED');
+      setTimeout(() => setSessionStatus('IDLE'), 2000);
+    } catch (e) {
+      setError("SESSION CAPACITY EXCEEDED: UNABLE TO PERSIST BITSTREAM.");
+      setSessionStatus('ERROR');
+    }
+  };
+
+  const handleSaveRequest = () => {
+    if (!image && !analysis) return;
+    if (localStorage.getItem(SESSION_STORAGE_KEY)) {
+      setShowOverwriteConfirm(true);
+    } else {
+      commitSave();
+    }
+  };
 
   const parseAnalysis = (text: string): ReportSection[] => {
     const sections: ReportSection[] = [];
@@ -134,6 +170,23 @@ const ImageAnalyzer: React.FC = () => {
     return sections;
   };
 
+  const handleLensSearch = () => {
+    if (!analysis) return;
+    const sections = parseAnalysis(analysis);
+    const summarySection = sections.find(s => s.title.toUpperCase().includes('SUBJECT SUMMARY'));
+    
+    if (summarySection && summarySection.content.length > 0) {
+      // Extract first meaningful sentence or bullet point as query
+      const query = summarySection.content[0].replace('• ', '').substring(0, 100);
+      const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}&tbm=isch`;
+      window.open(searchUrl, '_blank');
+    } else {
+      // Fallback to filename if summary is unavailable
+      const query = metadata?.filename || "unknown subject";
+      window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}&tbm=isch`, '_blank');
+    }
+  };
+
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -147,7 +200,6 @@ const ImageAnalyzer: React.FC = () => {
         setAnalysis(null);
         setExif(null);
         setCitations([]);
-        setIsSessionLoaded(false);
         
         const img = new Image();
         img.onload = () => {
@@ -281,15 +333,21 @@ const ImageAnalyzer: React.FC = () => {
     URL.revokeObjectURL(url);
   };
 
-  const clearSession = () => {
+  const clearWorkspace = () => {
     setImage(null);
     setAnalysis(null);
     setMetadata(null);
     setExif(null);
     setCitations([]);
-    localStorage.removeItem(SESSION_STORAGE_KEY);
-    setIsSessionLoaded(false);
     if (currentSourceRef.current) currentSourceRef.current.stop();
+  };
+
+  const purgeVault = () => {
+    if (confirm("PURGE SESSION VAULT? THIS CANNOT BE UNDONE.")) {
+      localStorage.removeItem(SESSION_STORAGE_KEY);
+      setHasStoredSession(false);
+      clearWorkspace();
+    }
   };
 
   return (
@@ -298,15 +356,56 @@ const ImageAnalyzer: React.FC = () => {
         <h2 className="font-serif text-5xl md:text-7xl mb-6 uppercase tracking-tighter">Inspector</h2>
         <p className="font-mono text-xs tracking-widest opacity-40 uppercase">Digital forensic decoding & visual context search.</p>
         
-        {isSessionLoaded && (
-          <div className="mt-4 flex justify-center items-center gap-2 animate-in fade-in duration-700">
-            <div className="w-1 h-1 bg-white animate-pulse"></div>
-            <span className="font-mono text-[7px] tracking-[0.4em] opacity-30 uppercase">Session Restored from Vault</span>
-          </div>
-        )}
+        <div className="mt-6 flex justify-center items-center gap-6">
+          {hasStoredSession && !image && (
+            <button 
+              onClick={handleRestoreSession}
+              disabled={sessionStatus === 'RESTORING'}
+              className="font-mono text-[8px] tracking-[0.4em] opacity-40 hover:opacity-100 uppercase border border-white/10 px-4 py-2 transition-all tech-hover"
+            >
+              {sessionStatus === 'RESTORING' ? '[RECOVERING_BITSTREAM...]' : '[RESTORE_FROM_VAULT]'}
+            </button>
+          )}
+          {hasStoredSession && (
+             <button 
+               onClick={purgeVault}
+               className="font-mono text-[8px] tracking-[0.4em] opacity-20 hover:opacity-100 uppercase transition-all"
+             >
+               [PURGE_VAULT]
+             </button>
+          )}
+        </div>
       </div>
 
       <ErrorBanner message={error} onClear={() => setError(null)} />
+
+      {showOverwriteConfirm && (
+        <div className="fixed inset-0 z-[500] flex items-center justify-center p-6 bg-black/90 backdrop-blur-md animate-in fade-in duration-300">
+          <div className="max-w-md w-full border border-white/20 bg-black p-12 space-y-10 text-center relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-[1px] bg-white/20 animate-pulse"></div>
+            <div className="space-y-4">
+              <h3 className="font-mono text-xs tracking-[0.6em] uppercase text-white/90">Overwrite Detected</h3>
+              <p className="font-mono text-[9px] opacity-40 leading-relaxed uppercase tracking-widest">
+                A session bitstream already exists in the vault. Proceeding will overwrite previous intelligence data.
+              </p>
+            </div>
+            <div className="flex gap-4">
+              <button 
+                onClick={commitSave}
+                className="flex-1 py-4 bg-white text-black font-mono text-[10px] tracking-[0.4em] uppercase hover:bg-white/80 transition-all"
+              >
+                [PROCEED]
+              </button>
+              <button 
+                onClick={() => setShowOverwriteConfirm(false)}
+                className="flex-1 py-4 border border-white/10 font-mono text-[10px] tracking-[0.4em] uppercase opacity-40 hover:opacity-100 transition-all"
+              >
+                [ABORT]
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
         <div className="lg:col-span-2 space-y-12">
@@ -346,21 +445,37 @@ const ImageAnalyzer: React.FC = () => {
             <button 
               onClick={handleAnalyze} 
               disabled={isAnalyzing || !image} 
-              className="px-12 py-5 border border-white/20 font-mono text-[10px] tracking-[0.4em] uppercase hover:bg-white hover:text-black transition-all disabled:opacity-20 glitch-hover"
+              className="px-12 py-5 border border-white/20 font-mono text-[10px] tracking-[0.4em] uppercase hover:bg-white hover:text-black transition-all disabled:opacity-20 tech-hover"
             >
               {isAnalyzing ? 'Running Neural Protocols...' : 'Start Forensic Analysis'}
             </button>
+            
+            <button 
+              onClick={handleSaveRequest}
+              disabled={sessionStatus === 'SAVING' || (!image && !analysis)}
+              className={`px-8 py-5 border border-white/20 font-mono text-[10px] tracking-[0.4em] uppercase transition-all tech-hover ${sessionStatus === 'SAVED' ? 'bg-white text-black' : ''}`}
+            >
+              {sessionStatus === 'SAVING' ? '[SAVING...]' : sessionStatus === 'SAVED' ? '[SAVED_TO_VAULT]' : '[Save Session]'}
+            </button>
+
             {analysis && (
               <>
                 <button 
+                  onClick={handleLensSearch} 
+                  className="px-8 py-5 border border-white/20 font-mono text-[10px] tracking-[0.4em] uppercase transition-all tech-hover flex items-center gap-2"
+                >
+                  <div className="w-2 h-2 border border-current rounded-full"></div>
+                  [Visual Lookup]
+                </button>
+                <button 
                   onClick={downloadReport} 
-                  className="px-8 py-5 border border-white/20 font-mono text-[10px] tracking-[0.4em] uppercase hover:bg-white hover:text-black transition-all glitch-hover"
+                  className="px-8 py-5 border border-white/20 font-mono text-[10px] tracking-[0.4em] uppercase transition-all tech-hover"
                 >
                   [Download Report]
                 </button>
                 <button 
                   onClick={handleSpeak} 
-                  className={`px-8 py-5 border border-white/20 font-mono text-[10px] tracking-[0.4em] uppercase transition-all glitch-hover flex items-center gap-3 ${isSpeaking ? 'bg-white text-black' : 'hover:bg-white hover:text-black'}`}
+                  className={`px-8 py-5 border border-white/20 font-mono text-[10px] tracking-[0.4em] uppercase transition-all tech-hover flex items-center gap-3 ${isSpeaking ? 'bg-white text-black' : ''}`}
                 >
                   <div className={`w-1.5 h-1.5 rounded-full bg-current ${isSpeaking ? 'animate-pulse' : ''}`}></div>
                   {isSpeaking ? '[Stop Audio]' : '[Audio Briefing]'}
@@ -368,7 +483,7 @@ const ImageAnalyzer: React.FC = () => {
               </>
             )}
             {image && !isAnalyzing && (
-               <button onClick={clearSession} className="px-6 py-5 border border-white/5 font-mono text-[10px] tracking-[0.2em] opacity-30 hover:opacity-100 uppercase transition-all">[Purge Workspace]</button>
+               <button onClick={clearWorkspace} className="px-6 py-5 border border-white/5 font-mono text-[10px] tracking-[0.2em] opacity-30 hover:opacity-100 uppercase transition-all">[Clear Workspace]</button>
             )}
           </div>
 
@@ -488,7 +603,7 @@ const ImageAnalyzer: React.FC = () => {
              <div className="space-y-4 font-mono text-[8px] uppercase tracking-widest">
                 <div className="flex justify-between items-center">
                   <span className="opacity-40">Persistence</span>
-                  <span className={image ? 'text-white' : 'opacity-10'}>{image ? 'STREAMS_SAVED' : 'READY'}</span>
+                  <span className={hasStoredSession ? 'text-white' : 'opacity-10'}>{hasStoredSession ? 'VAULT_ACTIVE' : 'READY'}</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="opacity-40">Uplink</span>
