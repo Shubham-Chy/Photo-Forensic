@@ -1,8 +1,6 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/google/material-design-icons/master/png/action/visibility/black/48dp.png" width="80" alt="Logo" style="filter: invert(1);" />
+  <img src="images/logo.png" width="120" alt="Photo Forensic Logo" style="filter: invert(1); padding: 10px; border: 1px solid #111;" />
 </p>
-
-<h1 align="center">PHOTO FORENSIC LABORATORY</h1>
 
 <p align="center">
   <b>Advanced Digital Investigation & Neural Reconstruction Suite</b>
