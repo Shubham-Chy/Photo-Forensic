@@ -27,7 +27,7 @@
 ## 🖼️ INTERFACE PREVIEW
 
 <p align="center">
-  <img src="img/prev.jpg" width="400" alt="UI Screenshot" style="filter: invert(1); border: 1px solid #111; padding: 20px;" /><br/>
+  <img src="img/prev.jpg" width="auto" alt="UI Screenshot" style="filter: invert(1); border: 1px solid #111; padding: 20px;" /><br/>
   <i>STARK MINIMALISM • HUD OVERLAY • NOIR CONTRAST</i>
 </p>
 
