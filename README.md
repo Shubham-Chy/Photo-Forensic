@@ -1,7 +1,3 @@
-<p align="center">
-  <img src="logo.png" width="120" alt="Logo" style="filter: invert(1); scale: 1.5;" />
-</p>
-
 <h1 align="center">PHOTO FORENSIC LABS</h1>
 
 <p align="center">
@@ -31,7 +27,7 @@
 ## 🖼️ INTERFACE PREVIEW
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/monitor.svg" width="400" alt="UI Screenshot" style="filter: invert(1); border: 1px solid #111; padding: 20px;" /><br/>
+  <img src="img/prev.jpg" width="400" alt="UI Screenshot" style="filter: invert(1); border: 1px solid #111; padding: 20px;" /><br/>
   <i>STARK MINIMALISM • HUD OVERLAY • NOIR CONTRAST</i>
 </p>
 
